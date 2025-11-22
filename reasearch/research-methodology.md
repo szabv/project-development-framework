@@ -10,8 +10,9 @@ This document describes a general approach for conducting and writing up technic
   - Note bottlenecks, constraints, and opportunities directly from the implementation and runtime behavior.
 
 - **Clarify goals and constraints**
-  - Capture explicit targets (quality metrics, latency p95, budget ceilings, scale assumptions).
-  - Record migration goals (e.g., model/vendor changes) and any platform preferences (AWS-only, serverless, etc.).
+  - Capture explicit targets and desired outcomes (for example, quality or accuracy metrics, latency goals, usability improvements, cost ceilings, scale assumptions).
+  - If the user request does not clearly state the point of the research or the goals, pause and ask for clarification before going deep.
+  - Record any relevant platform, technology, or process preferences and constraints.
 
 - **Survey domain practices and options**
   - For each major area of the topic (e.g., architecture, data, models, UX, operations), gather current best practices and commonly recommended patterns.
@@ -52,10 +53,10 @@ This document describes a general approach for conducting and writing up technic
     - **What**: the concrete change to apply.
     - **Why**: the rationale and how it helps given the goals/constraints.
     - **Impact**: expected directional impact and, when possible, rough quantitative ranges.
-    - **How**: specific implementation notes, including code paths, config changes, and migration steps.
+    - **How**: specific implementation notes, including code paths, configuration or infra changes, and any rollout or change-management steps.
 
-- **Evaluation and migration sections**
-  - Dedicate sections to evaluation strategy and migration plans when significant implementation or infrastructure changes are proposed.
+- **Evaluation and change planning**
+  - Dedicate sections to evaluation strategy and change or rollout plans when significant implementation or infrastructure changes are proposed.
   - Spell out dataset size (if applicable), metrics, where reports will live in the repo, and how to keep runs within budget or resource limits.
 
 - **Cost and operational guidance**
@@ -70,7 +71,8 @@ This document describes a general approach for conducting and writing up technic
 ## Quick Research Checklist
 
 - Capture current state with concrete code/config references.
-- Write down explicit goals and constraints before surveying options.
+- Write down explicit goals, targeted outcomes, and constraints before surveying options.
+- If goals or success criteria are unclear or contradictory, ask the user to clarify.
 - Collect domain practices and alternatives for each major area.
 - Map options to this system with clear What/Why/Impact/How.
 - Define evaluation metrics, datasets (if any), and where results are stored.
