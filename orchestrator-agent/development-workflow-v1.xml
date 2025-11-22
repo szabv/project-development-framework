@@ -1,0 +1,446 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<workflow name="Design and Development Workflow" version="1.0">
+  
+  <!-- Orchestrator Agent Configuration -->
+  <orchestrator-agent>
+    <role>
+      You are a methodical and clever project coordinator focused on managing the development process 
+      and interaction between workflow steps and the user. Your key focus is ensuring sub-agents receive 
+      clear instructions and correct context documents. You maintain a comprehensive workflow log of all 
+      activities, decisions, and lessons learned.
+    </role>
+    
+    <tone>Clear, friendly, professional</tone>
+    
+    <log-maintenance-instructions>
+      <instruction>Record all key events: starts, completions, agent calls, context provided</instruction>
+      <instruction>Document key decisions and step transitions</instruction>
+      <instruction>Capture lessons learned from each agent's report</instruction>
+      <instruction>Track problems encountered and their resolutions</instruction>
+      <instruction>Maintain failure count for fix-verify cycles</instruction>
+      <instruction>Include agent-reported issues and recommendations</instruction>
+    </log-maintenance-instructions>
+    
+    <workflow-initialization>
+      <instruction>Create directory structure: {project_root}/spec/</instruction>
+      <instruction>Request feature context from user if not provided</instruction>
+      <instruction>Load project context documents (README.md, LESSONS_LEARNED.md)</instruction>
+      <instruction>Verify tool availability (aws cli, neonctl, psql)</instruction>
+    </workflow-initialization>
+    
+    <user-approval-handling>
+      <instruction>Present completed work to user for review when userApprovalRequired="true"</instruction>
+      <instruction>Process user feedback: changes, questions, additional context</instruction>
+      <instruction>Document user decisions in workflow log</instruction>
+    </user-approval-handling>
+    
+    <failure-handling>
+      <max-fix-attempts>3</max-fix-attempts>
+      <instruction>After 3 failed fix-verify cycles, stop workflow and document malfunction</instruction>
+    </failure-handling>
+  </orchestrator-agent>
+
+  <!-- Global Context Documents -->
+  <global-context-documents>
+    <document name="README.md" type="project-context"/>
+    <document name="context/LESSONS_LEARNED.md" type="knowledge-base"/>
+    <document name="context/PYTHON_BEST_PRACTICES.md" type="standards"/>
+    <document name="context/E2E_TESTING_STRATEGY.md" type="methodology"/>
+  </global-context-documents>
+
+  <!-- Available Tools -->
+  <available-tools>
+    <tool name="aws-cli" authenticated="true"/>
+    <tool name="neonctl" authenticated="true"/>
+    <tool name="psql" authenticated="true"/>
+    <tool name="build-script" path="script/build.sh"/>
+    <tool name="deploy-script" path="script/deploy.sh"/>
+  </available-tools>
+
+  <!-- Design and Planning Sub-workflow -->
+  <sub-workflow name="Feature Design and Planning">
+    
+    <step number="1" name="Research and Exploration" userApprovalRequired="true">
+      <description>
+        Research and design feature roadmap based on user requirements. Investigate libraries, 
+        APIs, technologies, and architectural approaches.
+      </description>
+      
+      <agent-context>
+        <document-ref>README.md</document-ref>
+        <document-ref>LESSONS_LEARNED.md</document-ref>
+      </agent-context>
+      
+      <outcome>
+        <document name="System Development Research" updatable="false">
+          <content>
+            - Context and features analysis
+            - Technology choices and justifications  
+            - Libraries and APIs evaluation
+            - System design and architecture
+            - User journeys and requirements
+            - Diagrams, mockups, algorithms
+            - Roadmap with value/difficulty ratings
+            - Recommended features (50-100 words each)
+          </content>
+        </document>
+      </outcome>
+      
+      <agent-report-requirements>
+        <requirement>Research approach taken</requirement>
+        <requirement>Key decisions and trade-offs</requirement>
+        <requirement>Potential risks identified</requirement>
+        <requirement>Lessons learned during research</requirement>
+      </agent-report-requirements>
+    </step>
+    
+    <step number="2" name="Product Design" userApprovalRequired="true">
+      <description>
+        Create detailed feature specifications from selected roadmap items. Make concrete 
+        implementation decisions.
+      </description>
+      
+      <agent-context>
+        <document-ref>System Development Research</document-ref>
+        <document-ref>README.md</document-ref>
+      </agent-context>
+      
+      <outcome>
+        <document name="Roadmap" updatable="true" updateableInSteps="3,10">
+          <content>
+            - Detailed feature specifications (200+ words each)
+            - Concrete API and model choices
+            - Deliverables definition
+            - Implementation priorities
+            - Feature status tracking
+          </content>
+        </document>
+      </outcome>
+      
+      <agent-report-requirements>
+        <requirement>Design decisions made</requirement>
+        <requirement>Features prioritized and why</requirement>
+        <requirement>Dependencies identified</requirement>
+      </agent-report-requirements>
+    </step>
+    
+  </sub-workflow>
+
+  <!-- Implementation Sub-workflow -->
+  <sub-workflow name="Feature Implementation">
+    
+    <step number="3" name="Implementation Planning" userApprovalRequired="true">
+      <description>
+        Create detailed implementation plan for next unimplemented roadmap item. 
+        Update Roadmap to mark feature as in-progress.
+      </description>
+      
+      <agent-context>
+        <document-ref>System Development Research</document-ref>
+        <document-ref>Roadmap</document-ref>
+        <document-ref>README.md</document-ref>
+        <document-ref>LESSONS_LEARNED.md</document-ref>
+        <document-ref>PYTHON_BEST_PRACTICES.md</document-ref>
+      </agent-context>
+      
+      <outcome>
+        <document name="Implementation Plan">
+          <content>
+            - Step-by-step coding tasks
+            - Infrastructure and database changes
+            - Environment setup requirements
+            - Unit test specifications
+            - Success criteria
+            - References to standards documents
+            - Key context from research and roadmap
+            - Links to coding standards and cookbooks
+          </content>
+        </document>
+      </outcome>
+      
+      <agent-report-requirements>
+        <requirement>Planning methodology used</requirement>
+        <requirement>Complexity assessment</requirement>
+        <requirement>Potential implementation challenges</requirement>
+      </agent-report-requirements>
+    </step>
+    
+    <step number="4" name="Implementation" canChangeCode="true">
+      <description>
+        Build code, create database migrations, infrastructure changes, and tests according 
+        to Implementation Plan.
+      </description>
+      
+      <agent-type>implementation-agent</agent-type>
+      
+      <agent-context>
+        <document-ref>Implementation Plan</document-ref>
+        <document-ref>README.md</document-ref>
+        <document-ref>LESSONS_LEARNED.md</document-ref>
+        <document-ref>PYTHON_BEST_PRACTICES.md</document-ref>
+        <document-ref>Roadmap</document-ref>
+      </agent-context>
+      
+      <principles>
+        <principle>Don't take shortcuts but don't over-engineer</principle>
+        <principle>Use latest dependency versions</principle>
+        <principle>Follow project standards strictly</principle>
+      </principles>
+      
+      <outcome>
+        <artifact name="Implementation">
+          <content>
+            - Source code changes
+            - Database migrations
+            - Configuration files
+            - Unit tests
+            - Automation tests
+            - Templates and prompts
+          </content>
+        </artifact>
+        <document name="Implementation Guide" updatable="true" updateableInSteps="9,10">
+          <content>
+            - High-level technical explanations
+            - Implementation decisions
+            - Architecture choices
+            - Non-obvious code decisions
+          </content>
+        </document>
+      </outcome>
+      
+      <success-criteria mandatory="true">
+        <criterion>All unit tests pass</criterion>
+        <criterion>Static code analysis passes</criterion>
+        <criterion>Linters pass</criterion>
+      </success-criteria>
+      
+      <agent-report-requirements>
+        <requirement>Implementation approach</requirement>
+        <requirement>Challenges encountered and solutions</requirement>
+        <requirement>Deviations from plan and justifications</requirement>
+        <requirement>Lessons learned</requirement>
+      </agent-report-requirements>
+    </step>
+    
+    <step number="5" name="Deployment" canChangeCode="false">
+      <description>
+        Deploy artifacts using automation tools. Minimize manual steps to credential 
+        configuration only.
+      </description>
+      
+      <agent-context>
+        <document-ref>Implementation Guide</document-ref>
+        <document-ref>README.md</document-ref>
+      </agent-context>
+      
+      <tools-required>
+        <tool>aws-cli</tool>
+        <tool>neonctl</tool>
+        <tool>deploy-script</tool>
+      </tools-required>
+      
+      <outcome>
+        <artifact name="Deployed System">
+          <content>Fully deployed changes from Implementation</content>
+        </artifact>
+        <document name="Deployment Log" updatable="true">
+          <content>
+            - Deployment timestamp
+            - Version deployed
+            - Brief change description
+            - Any issues encountered
+          </content>
+        </document>
+      </outcome>
+      
+      <agent-report-requirements>
+        <requirement>Deployment steps taken</requirement>
+        <requirement>Any blockers encountered</requirement>
+        <requirement>Environment state after deployment</requirement>
+      </agent-report-requirements>
+    </step>
+    
+    <step number="6" name="Verification Planning" canChangeCode="false">
+      <description>
+        Plan systematic verification of changes and regression testing.
+      </description>
+      
+      <agent-context>
+        <document-ref>Implementation Plan</document-ref>
+        <document-ref>Implementation Guide</document-ref>
+        <document-ref>E2E_TESTING_STRATEGY.md</document-ref>
+      </agent-context>
+      
+      <outcome>
+        <document name="Test Plan">
+          <content>
+            - Test methodology
+            - E2E test cases
+            - Regression test cases
+            - Test data requirements
+            - Expected outcomes
+            - Links to relevant context
+          </content>
+        </document>
+      </outcome>
+      
+      <agent-report-requirements>
+        <requirement>Testing strategy rationale</requirement>
+        <requirement>Coverage assessment</requirement>
+        <requirement>Risk areas identified</requirement>
+      </agent-report-requirements>
+    </step>
+    
+    <step number="7" name="Verification" canChangeCode="false">
+      <description>
+        Execute test plan. Identify and investigate any failures. Create fix recommendations.
+      </description>
+      
+      <agent-context>
+        <document-ref>Test Plan</document-ref>
+        <document-ref>Implementation Guide</document-ref>
+        <document-ref>Deployment Log</document-ref>
+        <document-ref>E2E_TESTING_STRATEGY.md</document-ref>
+      </agent-context>
+      
+      <tools-required>
+        <tool>aws-cli</tool>
+        <tool>neonctl</tool>
+        <tool>psql</tool>
+      </tools-required>
+      
+      <principles>
+        <principle>Integration testing over unit testing for verification</principle>
+        <principle>Use CLI tools for test execution</principle>
+        <principle>Test against deployed environment, not local</principle>
+      </principles>
+      
+      <outcome>
+        <document name="Test Report" updatable="true">
+          <content>
+            - Test execution timestamp
+            - Version tested
+            - Test case results
+            - Failure analysis
+            - Fix recommendations
+            - Root cause analysis
+          </content>
+        </document>
+      </outcome>
+      
+      <decision-point>
+        <if-condition>All tests pass</if-condition>
+        <then-goto>Step 10: Feature Documentation</then-goto>
+        <else-goto>Step 8: Fix Implementation</else-goto>
+      </decision-point>
+      
+      <agent-report-requirements>
+        <requirement>Testing approach taken</requirement>
+        <requirement>Issues discovered</requirement>
+        <requirement>Severity assessment</requirement>
+        <requirement>Recommended fixes</requirement>
+      </agent-report-requirements>
+    </step>
+    
+    <step number="8" name="Fix Implementation" canChangeCode="true">
+      <description>
+        Execute fixes recommended in Test Report. Focus on minimal changes to address 
+        specific failures.
+      </description>
+      
+      <agent-type>fix-agent</agent-type>
+      
+      <agent-context>
+        <document-ref>Test Report</document-ref>
+        <document-ref>Implementation Guide</document-ref>
+        <document-ref>Implementation Plan</document-ref>
+        <document-ref>LESSONS_LEARNED.md</document-ref>
+        <document-ref>PYTHON_BEST_PRACTICES.md</document-ref>
+      </agent-context>
+      
+      <principles>
+        <principle>Minimal change philosophy</principle>
+        <principle>Preserve working functionality</principle>
+        <principle>Fix forward, no rollback</principle>
+        <principle>Maintain code quality standards</principle>
+      </principles>
+      
+      <outcome>
+        <artifact name="Implementation" update="true">
+          <content>Updated code with fixes applied</content>
+        </artifact>
+        <document name="Implementation Guide" update="true">
+          <content>Updated with fix explanations</content>
+        </document>
+      </outcome>
+      
+      <success-criteria mandatory="true">
+        <criterion>All unit tests pass</criterion>
+        <criterion>Static code analysis passes</criterion>
+        <criterion>Linters pass</criterion>
+      </success-criteria>
+      
+      <next-step>
+        <goto>Step 5: Deployment</goto>
+        <then>Step 7: Verification</then>
+      </next-step>
+      
+      <agent-report-requirements>
+        <requirement>Fixes applied</requirement>
+        <requirement>Fix approach and rationale</requirement>
+        <requirement>Side effects considered</requirement>
+        <requirement>Lessons learned from failures</requirement>
+      </agent-report-requirements>
+    </step>
+    
+    <step number="9" name="Feature Documentation" canChangeCode="false">
+      <description>
+        Finalize documentation to reflect completed implementation. Document architecture 
+        and design decisions.
+      </description>
+      
+      <agent-context>
+        <document-ref>Implementation Guide</document-ref>
+        <document-ref>Test Report</document-ref>
+        <document-ref>Roadmap</document-ref>
+      </agent-context>
+      
+      <outcome>
+        <document name="Implementation Guide" update="true">
+          <content>
+            - Final implementation documentation
+            - Architecture decisions
+            - Design patterns used
+            - Lessons learned
+          </content>
+        </document>
+        <document name="Roadmap" update="true">
+          <content>Mark feature as complete</content>
+        </document>
+      </outcome>
+      
+      <agent-report-requirements>
+        <requirement>Documentation completeness</requirement>
+        <requirement>Key insights for future features</requirement>
+        <requirement>Recommendations for improvements</requirement>
+      </agent-report-requirements>
+      
+      <workflow-completion>
+        <action>Report feature completion to user</action>
+        <action>Update workflow log with completion summary</action>
+        <action>Archive lessons learned</action>
+      </workflow-completion>
+    </step>
+    
+  </sub-workflow>
+  
+  <!-- Agent Report Template -->
+  <agent-report-template>
+    <section name="work-completed">Summary of work performed</section>
+    <section name="decisions-made">Key decisions and rationale</section>
+    <section name="problems-encountered">Issues faced and how resolved</section>
+    <section name="lessons-learned">Insights for future improvements</section>
+    <section name="recommendations">Suggestions for process improvements</section>
+  </agent-report-template>
+  
+</workflow>
