@@ -1,6 +1,6 @@
 # Project Development Orchestrator – System Design (Markdown)
 
-This document is human-readable and shared; agent prompts remain in XML snippets. The orchestrator runs inside a chosen agent harness (Claude Code, Codex CLI, or Gemini) and invokes specialist subagents via shell-based CLI calls. Prompt templates are tailored per harness to avoid prompt drift when swapping execution environments.
+The orchestrator runs inside a chosen agent harness (Claude Code, Codex CLI, or Gemini) and invokes specialist subagents via shell-based CLI calls. Prompt templates are tailored per harness to avoid prompt drift when swapping execution environments.
 
 ## Architecture
 

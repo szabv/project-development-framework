@@ -1,6 +1,6 @@
 # Research: Calling Subagents via CLI in Target Harnesses
 
-Scope: how to invoke subagents (LLM workers) from the main orchestrator when running inside common CLI-based agent harnesses. Harnesses considered: Claude Code (Anthropic), Codex CLI (this project harness), Gemini Code Assist (Google). Cursor/ArCursor excluded per latest guidance.
+Scope: how to invoke subagents (LLM workers) from the main orchestrator when running inside common CLI-based agent harnesses. Harnesses considered: Claude Code (Anthropic), Codex CLI (this project harness), Gemini Code Assist (Google).
 
 ## Sources Consulted
 - Anthropic Claude Code overview: https://docs.anthropic.com/claude/docs/claude-code (accessed via HTTP 200)
